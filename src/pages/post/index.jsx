@@ -22,6 +22,7 @@ const Post = () => {
   const [janrInput, setJanrInput] = useState(""); // Yangi janr kiritish uchun vaqtinchalik state
   const [episodeInput, setEpisodeInput] = useState("");
 
+
   const isFormValid = newPost.name && newPost.about && newPost.season && newPost.s_image && newPost.image && newPost.episodes && newPost.url && newPost.janr.length > 0 && newPost.episode_links.length > 0;
 
   const handleEpisodeChange = (e) => {

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getDatabase, ref, get, update, remove } from 'firebase/database';
 import { MdArrowBackIos } from "react-icons/md";
 import app from '../../firebeseConfig'; // Ensure the path is correct
+import { Modal } from 'antd'; // Import Ant Design's Modal
 
 const Edit = () => {
   const { id } = useParams(); // Anime ID passed via route parameters
@@ -12,7 +13,7 @@ const Edit = () => {
     description: '',
     img: '',
     s_img: '',
-    janr: [{name: ''}], // Now an array of objects
+    janr: [{ name: '' }], // Now an array of objects
     episodes: [{ linkId: Date.now(), link: '' }],
     episode_count: '',
     url: '',
@@ -20,6 +21,7 @@ const Edit = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [modal, setModal] = useState({ visible: false, message: '', onConfirm: null });
 
   // Fetch the current anime data
   useEffect(() => {
@@ -33,8 +35,7 @@ const Edit = () => {
           const data = snapshot.val();
           setAnimeData({
             ...data,
-            janr: data.janr || [],
-             // Ensure janr is an array
+            janr: data.janr || [], // Ensure janr is an array
           });
         } else {
           setError('No data found for this anime.');
@@ -48,9 +49,6 @@ const Edit = () => {
 
     fetchAnimeData();
   }, [id]);
-  
-
-
 
   // Handle input changes
   const handleInputChange = (e) => {
@@ -64,7 +62,7 @@ const Edit = () => {
   // Handle genre changes
   const handleGenreChange = (index, value) => {
     const updatedGenres = [...animeData.janr];
-    updatedGenres[index] = { ...updatedGenres[index], name: value,}; // Update the name of the genre at the specified index
+    updatedGenres[index] = { ...updatedGenres[index], name: value }; // Update the name of the genre at the specified index
     setAnimeData((prevData) => ({
       ...prevData,
       janr: updatedGenres,
@@ -88,7 +86,6 @@ const Edit = () => {
     }));
   };
 
-  // Handle episode link changes
   // Handle episode link changes
   const handleEpisodeLinkChange = (index, value) => {
     const updatedLinks = [...animeData.episodes];
@@ -124,10 +121,17 @@ const Edit = () => {
       const animeRef = ref(db, `movies/animes/${id}`);
       await update(animeRef, animeData); // Update the existing record
 
-      alert('Data updated successfully!');
-      navigate('/'); // Navigate back to the main list or home page
+      setModal({
+        visible: true,
+        message: 'Data updated successfully!',
+        onConfirm: () => navigate('/'),
+      });
     } catch (error) {
-      alert(`Error updating data: ${error.message}`);
+      setModal({
+        visible: true,
+        message: `Error updating data: ${error.message}`,
+        onConfirm: () => setModal({ visible: false }),
+      });
     }
   };
 
@@ -136,10 +140,17 @@ const Edit = () => {
       const db = getDatabase(app);
       const animeRef = ref(db, `movies/animes/${id}`);
       await remove(animeRef);
-      alert('Data deleted successfully!');
-      navigate('/'); // Navigate back to the main list or home page after deletion
+      setModal({
+        visible: true,
+        message: 'Data deleted successfully!',
+        onConfirm: () => navigate('/'),
+      });
     } catch (error) {
-      alert(`Error deleting data: ${error.message}`);
+      setModal({
+        visible: true,
+        message: `Error deleting data: ${error.message}`,
+        onConfirm: () => setModal({ visible: false }),
+      });
     }
   };
 
@@ -148,6 +159,21 @@ const Edit = () => {
 
   return (
     <div className="px-4 py-6 max-w-4xl mx-auto">
+      <Modal
+        visible={modal.visible}
+        onOk={modal.onConfirm}
+        onCancel={() => setModal({ visible: false })}
+        footer={null}
+      >
+        <p>{modal.message}</p>
+        <button
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          onClick={modal.onConfirm}
+        >
+          OK
+        </button>
+      </Modal>
+
       <button
         className="absolute top-32 left-20 cursor-pointer text-2xl font-semibold text-gray-900 dark:text-white mb-6"
         onClick={() => navigate(-1)}
