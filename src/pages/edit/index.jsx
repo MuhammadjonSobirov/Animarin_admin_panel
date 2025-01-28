@@ -12,7 +12,7 @@ const Edit = () => {
     description: '',
     img: '',
     s_img: '',
-    janr: [], // Now an array of objects
+    janr: [{name: ''}], // Now an array of objects
     episodes: [{ linkId: Date.now(), link: '' }],
     episode_count: '',
     url: '',
@@ -33,7 +33,8 @@ const Edit = () => {
           const data = snapshot.val();
           setAnimeData({
             ...data,
-            janr: data.janr || [], // Ensure janr is an array
+            janr: data.janr || [],
+             // Ensure janr is an array
           });
         } else {
           setError('No data found for this anime.');
@@ -47,8 +48,8 @@ const Edit = () => {
 
     fetchAnimeData();
   }, [id]);
+  
 
-  console.log(animeData);
 
 
   // Handle input changes
@@ -63,7 +64,7 @@ const Edit = () => {
   // Handle genre changes
   const handleGenreChange = (index, value) => {
     const updatedGenres = [...animeData.janr];
-    updatedGenres[index].name = value; // Update the name of the genre at the specified index
+    updatedGenres[index] = { ...updatedGenres[index], name: value,}; // Update the name of the genre at the specified index
     setAnimeData((prevData) => ({
       ...prevData,
       janr: updatedGenres,

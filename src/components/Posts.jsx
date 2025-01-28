@@ -22,7 +22,6 @@ const Read = () => {
         if (snapshot.val()) {
           const temporaryarray = Object.keys(myData).map((key) => ({ ...myData[key], animeId: key }))
           setData(temporaryarray);
-          console.log(temporaryarray);
           
         } else {
           setError('No data available');
@@ -52,7 +51,6 @@ const Read = () => {
     return <div className="text-center text-red-600">{error}</div>;
   }
 
-  console.log(data);
 
   return (
     <div className="px-4 py-6">

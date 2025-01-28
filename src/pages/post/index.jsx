@@ -67,7 +67,10 @@ const Post = () => {
         ...prevPost,
         janr: [...prevPost.janr, { id: Date.now(), name: janrInput }]
       }));
-      setJanrInput(""); // Inputni tozalash
+      setJanrInput("");
+      console.log(newPost.janr.map((j) => j.name));
+      
+       // Inputni tozalash
     }
   };
 
@@ -108,7 +111,7 @@ const Post = () => {
       await set(newDocRef, {
         name: newPost.name,
         description: newPost.about,
-        janr: newPost.janr.map((j) => j.name), // Janr faqat nomlarni yozadi
+        janr: newPost.janr.map((j) => ({name: j.name })), // Janr faqat nomlarni yozadi
         img: newPost.image,
         s_img: newPost.s_image,
         episode_count: newPost.episodes,
